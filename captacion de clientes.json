@@ -1,0 +1,325 @@
+{
+  "name": "captacion de clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "={{ $('form de captacion').item.json['correo electronico'] }}",
+        "subject": "propuesta de automatizacion de LR systems.",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -656
+      ],
+      "id": "314f79c2-c545-4037-8941-02154d48ce65",
+      "name": "enviar_mensaje",
+      "webhookId": "de68fb73-e434-4053-802d-33d9f72379a0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lIjB5GfcEudX219E",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "CONTACTA CON LUCIANA RAMIREZ SYSTEMS",
+        "formDescription": "te daremos respuesta lo antes posible",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "apellido",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "correo electronico",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "presupuesto para proyecto:",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "5000-10000"
+                  },
+                  {
+                    "option": "10000-20000"
+                  },
+                  {
+                    "option": "20000-30000"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "cual es tu interes o problematica?",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "enviar"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -848,
+        -656
+      ],
+      "id": "2e90aa13-7c69-40c9-a004-287e129a11da",
+      "name": "form de captacion",
+      "webhookId": "a5efecee-0d32-4297-9e4e-8194077c17e7"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Actúa como un experto en Estrategia de Ventas y Comunicación para \"Luciana Ramirez Systems\". Tu objetivo es redactar correos electrónicos altamente persuasivos, profesionales y empáticos para prospectos que acaban de completar un formulario de contacto.\n\nTu tono debe ser:\n\nGenuino: Evita frases genéricas de robot.\n\nOrientado a soluciones: Enfócate en cómo la empresa puede resolver el \"Motivo de la consulta\".\n\nConciso: Los clientes potenciales valoran su tiempo.\n\nReglas de redacción:\n\nUsa el nombre del cliente de forma natural.\n\nAnaliza el \"Motivo de la consulta\" y menciona un beneficio específico relacionado con los servicios de Luciana Ramirez Systems (automatización, optimización de procesos o sistemas).\n\nTermina siempre con un \"Llamado a la acción\" (CTA) suave, como invitar a una breve llamada de 10 minutos.\n\n"
+            },
+            {
+              "content": "=Nombre: {{ $json.nombre }}\n\nDolor/Desafío: {{ $json['cual es tu interes o problematica?'] }}\n\nINSTRUCCIONES DE ESTILO Y FORMATO (CRÍTICO):\n\nSalida Limpia: Devuelve ÚNICAMENTE el código HTML crudo. PROHIBIDO usar bloques de código como ```html o comillas al inicio/final. Si incluyes algo que no sea HTML, el sistema fallará.\n\nLegibilidad: Usa <p> para párrafos de máximo 2 líneas. Es vital para lectura rápida en móviles.\n\nImpacto: Usa <strong> para resaltar la transformación, no solo el problema.\n\nESTRUCTURA PERSUASIVA:\n\nEl Gancho: Un saludo directo a {{ $json.nombre }}. Toca la herida: menciona cómo el desorden de \"{{ $json['cual es tu interes o problematica?'] }}\" le está robando energía y dinero ahora mismo.\n\nLa Metamorfosis (Deseo): No vendemos software, vendemos libertad. Explica que en Luciana Ramirez Systems convertimos el caos manual de {{ $json['cual es tu interes o problematica?'] }} en un motor automático que trabaja mientras {{ $json.nombre }} descansa.\n\nCierre de Alto Valor (CTA): Haz una pregunta que le obligue a cuestionar su eficiencia actual. \n   hace un gancho para que agende una cita que sea por llamada o por chat a traves del siguiente link :https://cal.com/luciana-ramirez-prqkkx/15min?user=luciana-ramirez-prqkkx&overlayCalendar=true\n(nunca cambies la url) .\n\nFirma: Profesional, de Luciana Ramirez Systems.\n\nRESTRICCIONES:\n\nMáximo 100 palabras.\n\nSolo el cuerpo del mensaje (sin asunto).\n\nSin introducciones ni comentarios adicionales."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -656,
+        -656
+      ],
+      "id": "35671ef3-c880-47c7-8dfb-04e0c01834d5",
+      "name": "ia_de_captacion",
+      "credentials": {
+        "openAiApi": {
+          "id": "wu4zqESPwchGZwGY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.calTrigger",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -448
+      ],
+      "id": "b29e7411-e250-4130-9708-b7d3a7809b60",
+      "name": "agenda de citas",
+      "webhookId": "d96dfde9-4ce4-4b57-8958-929d66120083",
+      "credentials": {
+        "calApi": {
+          "id": "EIo8o1k043J2NbQP",
+          "name": "Cal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.organizer.email }}",
+        "subject": "confirmacion de cita para propuesta de automatizacion de LR systems.",
+        "message": "=hola!\n<br>{{ $json.attendees[0].name }}\n<br><br>\n\nSimplemente recordarte que nos vemos el dia {{ $json.startTime.toDateTime().setLocale('ES').format('dd-MM-yyyy') }}\n<br>\n<br>\nsaludos\n<br>\nLuciana Ramirez Systems.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        -448
+      ],
+      "id": "66bb2ada-95ee-421e-b2f7-0e3b781cc921",
+      "name": "confirmacion de cita",
+      "webhookId": "de68fb73-e434-4053-802d-33d9f72379a0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lIjB5GfcEudX219E",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1w8wskJPOHLku-u5q1tFK7CTnv4v8i6drXtE9OnMS3M4",
+          "mode": "list",
+          "cachedResultName": "CRM_test_clientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w8wskJPOHLku-u5q1tFK7CTnv4v8i6drXtE9OnMS3M4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w8wskJPOHLku-u5q1tFK7CTnv4v8i6drXtE9OnMS3M4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fase": "Agendado",
+            "Correo electronico": "={{ $('agenda de citas').item.json.attendees[0].email }}",
+            "Nombre": "={{ $('agenda de citas').item.json.attendees[0].name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fase",
+              "displayName": "Fase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Correo electronico",
+              "displayName": "Correo electronico",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -352,
+        -448
+      ],
+      "id": "03425565-f380-4758-a0b9-daa1b6a0f039",
+      "name": "CRM",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CLlsrGLKW1xF0R8z",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "form de captacion": [
+      {
+        "json": {
+          "nombre": "luciana",
+          "apellido": "ramirez",
+          "correo electronico": "luciana.ramirez.systems@gmail.com",
+          "presupuesto para proyecto:": "5000-10000",
+          "cual es tu interes o problematica?": "ayuda",
+          "submittedAt": "2026-02-07T23:11:04.189-05:00",
+          "formMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "form de captacion": {
+      "main": [
+        [
+          {
+            "node": "ia_de_captacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ia_de_captacion": {
+      "main": [
+        [
+          {
+            "node": "enviar_mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agenda de citas": {
+      "main": [
+        [
+          {
+            "node": "confirmacion de cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "confirmacion de cita": {
+      "main": [
+        [
+          {
+            "node": "CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ad47da5b-5f39-4cf0-8e30-cc481d805004",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "50acaa76dff61cdefadbf9734bcafab297600d6cfea528c51db8e7ec0d36a1c7"
+  },
+  "id": "XSVoGomo0XyK2T0DmIG64",
+  "tags": []
+}
